@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A small question</title>
+<style>
+:root{--sky1:#bfe3f5;--sky2:#fde7ee;--ink:#2b2433;--win:#fffaf6;--bar:#e9d8ee;--line:#cdb8d6;--yes:#d8325f;--no:#efe6f2;--hill1:#9fd18a;--hill2:#6fb86a;--hill3:#4a9a52;--desk1:#c9b6e4;--desk2:#f6c9d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky1:#2a2650;--sky2:#6a3a66;--ink:#f3ebf6;--win:#2c2438;--bar:#43375a;--line:#5d4d78;--no:#3b3050;--desk1:#2a2650;--desk2:#6a3a66;--hill1:#4f8a5a;--hill2:#3d7a4c;--hill3:#2f6640}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Nunito","Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--desk1),var(--desk2));overflow:hidden;background-color:var(--desk1)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+.stage{position:fixed;inset:0;display:grid;place-items:center;padding:16px}
+.win{width:min(420px,100%);background:var(--win);border:2px solid var(--line);border-radius:14px;box-shadow:8px 8px 0 rgba(80,50,110,.25);overflow:hidden;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+.bar{display:flex;align-items:center;gap:8px;background:var(--bar);padding:9px 12px;border-bottom:2px solid var(--line);font-weight:800;font-size:14px}
+.dots{display:flex;gap:6px}.dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);background:var(--win)}
+.body{padding:28px 24px 24px;text-align:center}
+.body .icon{font-size:46px;line-height:1}
+h1{font-size:26px;margin:12px 0 6px;font-weight:900}
+p{margin:0 0 22px;opacity:.8;font-size:16px;line-height:1.5}
+.btns{display:flex;gap:12px;justify-content:center;min-height:50px}
+button{font:inherit;font-weight:800;font-size:17px;padding:12px 30px;border-radius:10px;border:2px solid var(--line);cursor:pointer;color:var(--ink);background:var(--no);transition:transform .12s}
+button:hover{transform:translateY(-2px)}
+button:focus-visible{outline:3px solid var(--yes);outline-offset:2px}
+button.yes{background:var(--yes);border-color:var(--yes);color:#fff}
+.win.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+#note{min-height:22px;margin:14px 0 0;font-size:14px;opacity:.75}
+/* scene */
+#scene{position:fixed;inset:0;opacity:0;pointer-events:none;transition:opacity 1.4s ease;background:linear-gradient(var(--sky1),var(--sky2) 55%,#fff6e8)}
+#scene.on{opacity:1;pointer-events:auto}
+#scene svg{width:100%;height:100%;display:block}
+.cap{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 22px);text-align:center;color:#fff;text-shadow:0 2px 12px rgba(90,40,90,.55);font-size:clamp(24px,5vw,44px);font-weight:900;letter-spacing:.5px;padding:0 16px}
+.back{position:absolute;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);background:rgba(255,255,255,.85);color:#2b2433}
+.sway{transform-box:fill-box;transform-origin:50% 100%;animation:sway 4s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.cloud{animation:drift 60s linear infinite alternate}
+@keyframes drift{to{transform:translateX(120px)}}
+@media (prefers-reduced-motion:reduce){.sway,.cloud,.win{animation:none}}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="win" id="win" role="dialog" aria-labelledby="q">
+    <div class="bar"><div class="dots"><i></i><i></i><i></i></div><span>question.exe</span></div>
+    <div class="body">
+      <div class="icon">🌷</div>
+      <h1 id="q">Want to see something pretty?</h1>
+      <p>Click yes and a field of tulips will bloom for you.</p>
+      <div class="btns">
+        <button class="yes" id="yes">Yes</button>
+        <button id="no">No</button>
+      </div>
+      <div id="note" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<div id="scene" aria-hidden="true">
+  <svg id="svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff7c9"/><stop offset="1" stop-color="#fff7c9" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="900" cy="170" r="190" fill="url(#sun)"/>
+    <circle cx="900" cy="170" r="46" fill="#fff3b8"/>
+    <g class="cloud" fill="#fff" opacity=".9">
+      <ellipse cx="220" cy="150" rx="90" ry="26"/><ellipse cx="270" cy="132" rx="60" ry="26"/><ellipse cx="170" cy="138" rx="50" ry="20"/>
+      <ellipse cx="620" cy="110" rx="70" ry="20"/><ellipse cx="660" cy="96" rx="44" ry="20"/>
+    </g>
+    <!-- windmill -->
+    <g transform="translate(250 340)">
+      <path d="M-18 0 L-10 -70 L10 -70 L18 0Z" fill="#f1e4d8"/><path d="M-12 -70 L0 -92 L12 -70Z" fill="#b55a6a"/>
+      <g transform="translate(0 -74)"><g><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="24s" repeatCount="indefinite"/>
+        <g fill="#fff" stroke="#c9b6c0" stroke-width="2"><rect x="-4" y="-60" width="8" height="60"/><rect x="-4" y="0" width="8" height="60"/><rect x="-60" y="-4" width="60" height="8"/><rect x="0" y="-4" width="60" height="8"/></g></g></g>
+    </g>
+    <path d="M0 360 Q300 290 600 345 T1200 320 V700 H0Z" fill="var(--hill1)"/>
+    <path d="M0 420 Q350 350 700 410 T1200 390 V700 H0Z" fill="var(--hill2)"/>
+    <path d="M0 500 Q400 450 800 490 T1200 480 V700 H0Z" fill="var(--hill3)"/>
+    <g id="field"></g>
+    <defs>
+      <g id="cat">
+        <path d="M26 -10 C60 -10 62 -52 44 -58" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <ellipse cx="0" cy="-30" rx="28" ry="32" fill="currentColor"/>
+        <ellipse cx="0" cy="-24" rx="15" ry="20" fill="#fff" opacity=".5"/>
+        <ellipse cx="-11" cy="-3" rx="9" ry="5" fill="currentColor"/><ellipse cx="11" cy="-3" rx="9" ry="5" fill="currentColor"/>
+        <path d="M-25 -88 L-23 -114 L-5 -99Z" fill="currentColor"/><path d="M25 -88 L23 -114 L5 -99Z" fill="currentColor"/>
+        <path d="M-21 -93 L-20 -107 L-11 -98Z" fill="#ffb3c7"/><path d="M21 -93 L20 -107 L11 -98Z" fill="#ffb3c7"/>
+        <circle cx="0" cy="-78" r="26" fill="currentColor"/>
+        <circle cx="-10" cy="-80" r="3.6" fill="#2b2433"/><circle cx="10" cy="-80" r="3.6" fill="#2b2433"/>
+        <circle cx="-9" cy="-81.5" r="1.2" fill="#fff"/><circle cx="11" cy="-81.5" r="1.2" fill="#fff"/>
+        <circle cx="-17" cy="-71" r="4.5" fill="#ff8fb0" opacity=".55"/><circle cx="17" cy="-71" r="4.5" fill="#ff8fb0" opacity=".55"/>
+        <path d="M-3 -73 L3 -73 L0 -69Z" fill="#ff6f98"/>
+        <path d="M0 -69 Q-4 -64 -8 -67 M0 -69 Q4 -64 8 -67" stroke="#2b2433" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M-20 -72 L-36 -75 M-20 -68 L-35 -66 M20 -72 L36 -75 M20 -68 L35 -66" stroke="#2b2433" stroke-width="1.2" opacity=".5" stroke-linecap="round"/>
+      </g>
+    </defs>
+    <g class="cats">
+      <use href="#cat" transform="translate(160 690) scale(1.35)" style="color:#f2b46d"/>
+      <use href="#cat" transform="translate(1040 692) scale(1.45)" style="color:#b9b4c9"/>
+      <use href="#cat" transform="translate(610 640) scale(.8)" style="color:#fbf6f1"/>
+      <use href="#cat" transform="translate(860 575) scale(.55)" style="color:#8a6f62"/>
+      <use href="#cat" transform="translate(60 575) scale(.6)" style="color:#8a6f62"/>
+      <use href="#cat" transform="translate(340 620) scale(.75)" style="color:#f7d9a8"/>
+      <use href="#cat" transform="translate(460 560) scale(.5)" style="color:#a7adc4"/>
+      <use href="#cat" transform="translate(400 695) scale(1.1)" style="color:#fbf6f1"/>
+      <use href="#cat" transform="translate(745 548) scale(.42)" style="color:#b9b4c9"/>
+      <use href="#cat" transform="translate(770 665) scale(.95)" style="color:#f2b46d"/>
+      <use href="#cat" transform="translate(960 585) scale(.62)" style="color:#fbf6f1"/>
+      <use href="#cat" transform="translate(1150 610) scale(.75)" style="color:#7d6a8a"/>
+      <use href="#cat" transform="translate(300 520) scale(.38)" style="color:#f2b46d"/>
+      <text x="392" y="548" font-size="28" fill="#ff5c8a" class="sway">♥</text>
+      <text x="765" y="528" font-size="28" fill="#ff5c8a" class="sway">♥</text>
+      <text x="150" y="500" font-size="30" fill="#ff5c8a" class="sway">♥</text>
+      <text x="1040" y="492" font-size="34" fill="#ff5c8a" class="sway">♥</text>
+      <text x="604" y="548" font-size="24" fill="#ff5c8a" class="sway">♥</text>
+    </g>
+  </svg>
+  <div class="cap">Richa, stay strong 🌷</div>
+  <button class="back" id="back">Go back</button>
+</div>
+
+<script>
+(function(){
+  var NS="http://www.w3.org/2000/svg";
+  var palette=[["#e8336d","#ff7aa2"],["#ffc533","#ffe27a"],["#8e5bd6","#c3a1f2"],["#ff6a3d","#ffa27a"],["#f7f2ee","#ffd9e6"],["#d11f4a","#f2668a"]];
+  var field=document.getElementById("field");
+  var seed=7;function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+  function tulip(x,y,s,c,delay){
+    var g=el("g",{transform:"translate("+x+" "+y+") scale("+s+")"},field);
+    var inner=el("g",{"class":"sway",style:"animation-delay:-"+delay+"s;animation-duration:"+(3+delay%2)+"s"},g);
+    el("path",{d:"M0 0 C-3 -30 3 -55 0 -88",stroke:"#2f7d3a","stroke-width":4,fill:"none","stroke-linecap":"round"},inner);
+    el("path",{d:"M0 -4 C-30 -20 -34 -60 -22 -78 C-14 -52 -6 -34 0 -4Z",fill:"#3d9a48"},inner);
+    el("path",{d:"M0 -4 C30 -16 36 -50 26 -68 C16 -46 6 -30 0 -4Z",fill:"#34853f"},inner);
+    var h=el("g",{transform:"translate(0 -88)"},inner);
+    el("path",{d:"M-15 0 C-20 -22 -10 -38 -6 -44 C-4 -30 -2 -14 0 0Z",fill:c[0]},h);
+    el("path",{d:"M15 0 C20 -22 10 -38 6 -44 C4 -30 2 -14 0 0Z",fill:c[0]},h);
+    el("path",{d:"M-15 0 C-16 -26 -6 -40 0 -48 C6 -40 16 -26 15 0 C8 8 -8 8 -15 0Z",fill:c[1]},h);
+    el("path",{d:"M-5 -4 C-4 -22 0 -34 0 -40",stroke:c[0],"stroke-width":2,fill:"none",opacity:.45},h);
+  }
+  // rows: back (small) to front (large)
+  var rows=[{y:430,s:.34,n:44},{y:470,s:.46,n:34},{y:520,s:.62,n:26},{y:580,s:.85,n:19},{y:650,s:1.15,n:14}];
+  rows.forEach(function(r,ri){
+    var band=ri%2?1:0;
+    for(var i=0;i<r.n;i++){
+      var x=(i+.5)*(1200/r.n)+(rnd()-.5)*(1200/r.n)*.7;
+      var c=palette[Math.floor(rnd()*palette.length)];
+      // clustered color: rows lean to a dominant tone for a painterly look
+      if(rnd()<.55)c=palette[(Math.floor(x/260)+band)%palette.length];
+      tulip(x,r.y+(rnd()-.5)*10,r.s*(0.9+rnd()*.25),c,Math.floor(rnd()*6)+1);
+    }
+  });
+  // UI logic
+  var win=document.getElementById("win"),note=document.getElementById("note"),
+      scene=document.getElementById("scene"),stage=document.getElementById("stage"),
+      no=document.getElementById("no"),yes=document.getElementById("yes"),n=0;
+  var msgs=["Are you sure? 🌷","Pretty please?","They are really nice…","Just one little peek?","Okay, the Yes button is right there →"];
+  yes.onclick=function(){no.style.display="none";stage.style.display="none";scene.classList.add("on");scene.setAttribute("aria-hidden","false");document.getElementById("back").focus()};
+  function dodge(e){
+    if(e&&e.cancelable)e.preventDefault();
+    if(no.parentNode!==document.body){document.body.appendChild(no);no.style.position="fixed";no.style.zIndex=5}
+    var w=no.offsetWidth,h=no.offsetHeight,vw=window.innerWidth,vh=window.innerHeight,x,y,t=0;
+    var ox=parseFloat(no.style.left)||vw/2,oy=parseFloat(no.style.top)||vh/2;
+    do{x=12+Math.random()*(vw-w-24);y=12+Math.random()*(vh-h-24);t++}while(t<20&&Math.hypot(x-ox,y-oy)<150);
+    no.style.left=x+"px";no.style.top=y+"px";no.style.transition="left .25s,top .25s";
+    note.textContent=msgs[Math.min(n,msgs.length-1)];n++;
+    win.classList.remove("shake");void win.offsetWidth;win.classList.add("shake");
+    yes.style.transform="scale("+Math.min(1+n*.12,1.6)+")";
+  }
+  ["pointerenter","pointerdown","touchstart","mousedown","focus","click"].forEach(function(ev){no.addEventListener(ev,dodge,{passive:false})});
+  document.getElementById("back").onclick=function(){scene.classList.remove("on");scene.setAttribute("aria-hidden","true");stage.style.display="grid";no.style.display="";n=0;note.textContent="";yes.style.transform=""};
+})();
+</script>
+</body>
+</html>
